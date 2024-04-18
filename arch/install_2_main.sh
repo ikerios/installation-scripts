@@ -6,7 +6,7 @@ if [ "$1" == "" ]; then
 fi
 
 if [ "$2" == "" ]; then
-    echo "Missing hostoname"
+    echo "Missing hostname"
     exit 1
 fi
 
