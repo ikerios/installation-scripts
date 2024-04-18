@@ -1,8 +1,35 @@
 #!/bin/bash
 
-# default values
-INST_USER=xon
-INST_PWD=password
+if [ "$1" == "" ]; then
+    echo "Missing device (e.g. /dev/nvme0n1)"
+    exit 1
+fi
+
+if [ "$2" == "" ]; then
+    echo "Missing hostoname"
+    exit 1
+fi
+
+if [ "$3" == "" ]; then
+    echo "Missing sudoers user (e.g. Sara)"
+    exit 1
+fi
+
+if [ "$4" == "" ]; then
+    echo "Missing password for sudoers user (and root)"
+    exit 1
+fi
+
+DEVICE_DISK=$1
+INST_HOSTNAME=$2
+INST_USER=$3
+INST_PWD=$4
+
+# quirk to handle nvme naming
+if [[ "$DEVICE_DISK" == *"nvme"* ]]; then
+  DEVICE_DISK+="p"
+fi
+
 
 ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
 hwclock --systohc
@@ -13,62 +40,52 @@ echo "LANG=en_US.UTF-8" > /etc/locale.conf
 echo "KEYMAP=us" > /etc/vconsole.conf
 echo "FONT=ter-122b" >> /etc/vconsole.conf
 echo "FONT_MAP=8859-2" >> /etc/vconsole.conf
-echo "infinity" > /etc/hostname
+echo $INST_HOSTNAME > /etc/hostname
 echo root:$INST_PWD | chpasswd
 
-pacman -Syy --noconfirm --needed base-devel bash-completion openssh grub efibootmgr reflector terminus-font networkmanager dosfstools btrfs-progs e2fsprogs tpm2-tss
+pacman -Syy --noconfirm --needed bash-completion sudo openssh efibootmgr terminus-font networkmanager iwd btrfs-progs dosfstools exfatprogs e2fsprogs xfsprogs
 
-reflector -c Italy -a 4 --save /etc/pacman.d/mirrorlist
+# if using reflector
+# pacman -Sy --noconfirm --needed reflector
+# reflector -c Italy -a 4 --save /etc/pacman.d/mirrorlist
 
-systemctl enable NetworkManager
-systemctl enable sshd
-#systemctl enable fstrim.timer
+# install sytstemd-boot
+bootctl install
 
 useradd -m $INST_USER
 echo $INST_USER:$INST_PWD | chpasswd
 
 echo "$INST_USER ALL=(ALL) ALL" >> /etc/sudoers.d/$INST_USER
 
-#BOOT_UUID=$(blkid -s UUID -o value /dev/nvme0n1p1)
-SWAP_UUID=$(blkid -s UUID -o value /dev/nvme0n1p2)
-ROOT_UUID=$(blkid -s UUID -o value /dev/nvme0n1p3)
-
-#enable crypt support for grub
-sed -i '/^#GRUB_ENABLE_CRYPTODISK/s/.//' /etc/default/grub
+ROOT_UUID=$(blkid -s UUID -o value "${DEVICE_DISK}"2)
 
 #crypt parameters and resume support for grub
-GRUB_LINE_CRYPT=GRUB_CMDLINE_LINUX=\""rd.luks.name=$ROOT_UUID=cryptroot rd.luks.name=$SWAP_UUID=cryptswap root=/dev/mapper/cryptroot resume=/dev/mapper/cryptswap rd.luks.options=$ROOT_UUID=tpm2-device=auto rd.luks.options=$SWAP_UUID=tpm2-device=auto \""
+CMD_LINE_CRYPT="rd.luks.name=$ROOT_UUID=root root=/dev/mapper/root resume=/dev/mapper/root rd.luks.options=$ROOT_UUID=tpm2-device=auto"
+CMD_LINE_GENERIC="rootflags=subvol=@ rootfstype=btrfs rw quiet mitigations=off"
 
-#/dev/tpmrm0
+CMD_LINE="${CMD_LINE_CRYPT} ${CMD_LINE_GENERIC}"
 
-#echo $GRUB_LINE_CRYPT
-sed -i "/^GRUB_CMDLINE_LINUX=/c$GRUB_LINE_CRYPT" /etc/default/grub
+#echo $CMD_LINE
+echo $CMD_LINE >> /etc/kernel/cmdline
+
+sed -i 's/^default_image/#&/' /etc/mkinitcpio.d/linux.preset
+sed -i 's/^fallback_image/#&/' /etc/mkinitcpio.d/linux.preset
+sed -i 's/^#default_uki/default_uki/' /etc/mkinitcpio.d/linux.preset
+sed -i 's/^#fallback_uki/fallback_uki/' /etc/mkinitcpio.d/linux.preset
 
 #enable crypt support in mkinitcpio
-MKINITCPIO_MODULES="MODULES=(i915)"
-MKINITCPIO_BINARIES="BINARIES=(btrfs nano)"
-MKINITCPIO_HOOKS="HOOKS=(base systemd autodetect keyboard sd-vconsole modconf block sd-encrypt filesystems fsck)"
-
-#echo $MKINITCPIO_MODULES
-#echo $MKINITCPIO_BINARIES
-#echo $MKINITCPIO_HOOKS
+# MKINITCPIO_MODULES="MODULES=(btrfs)"
+# MKINITCPIO_BINARIES="BINARIES=(/usr/bin/btrfs)"
+MKINITCPIO_HOOKS="HOOKS=(base systemd autodetect microcode modconf kms keyboard sd-vconsole block sd-encrypt filesystems fsck)"
 
 sed -i "/^MODULES=/c$MKINITCPIO_MODULES" /etc/mkinitcpio.conf
 sed -i "/^BINARIES=/c$MKINITCPIO_BINARIES" /etc/mkinitcpio.conf
 sed -i "/^HOOKS=/c$MKINITCPIO_HOOKS" /etc/mkinitcpio.conf
 
-echo "cryptroot	/dev/nvme0n1p3	-	tpm2-device=auto" >> /etc/crypttab.initramfs
-echo "cryptswap	/dev/nvme0n1p2	-	tpm2-device=auto" >> /etc/crypttab.initramfs
-
-systemd-cryptenroll /dev/nvme0n1p2 --wipe-slot=tpm2
-systemd-cryptenroll /dev/nvme0n1p3 --wipe-slot=tpm2
-
-systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+1+7 /dev/nvme0n1p2
-systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+1+7 /dev/nvme0n1p3
-
 mkinitcpio -P
 
-grub-install --removable --recheck --target=x86_64-efi --efi-directory=/boot --bootloader-id=ARCH
-grub-mkconfig -o /boot/grub/grub.cfg
+systemctl enable NetworkManager
+systemctl enable sshd
+
 
 /bin/echo -e "\e[1;32mDone! Type exit, umount -R /mnt and reboot.\e[0m"

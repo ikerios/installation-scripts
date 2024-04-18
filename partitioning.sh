@@ -29,9 +29,9 @@ fi
 
 # root partition
 cryptsetup luksFormat -y -v "${DEVICE_DISK}"2
-cryptsetup open "${DEVICE_DISK}"2 cryptroot
-mkfs.btrfs /dev/mapper/cryptroot
-mount /dev/mapper/cryptroot /mnt
+cryptsetup open "${DEVICE_DISK}"2 root
+mkfs.btrfs /dev/mapper/root
+mount /dev/mapper/root /mnt
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
 btrfs su cr /mnt/@snapshots
@@ -42,21 +42,21 @@ btrfs su cr /mnt/@swap
 btrfs su cr /mnt/@pkg
 
 umount /mnt
-mount -o noatime,compress=zstd,subvol=@ /dev/mapper/cryptroot /mnt
-mkdir -p /mnt/{boot,home,.snapshots,var/log,swap}
-mount -o noatime,compress=zstd,subvol=@home /dev/mapper/cryptroot /mnt/home
-mount -o noatime,compress=zstd,subvol=@snapshots /dev/mapper/cryptroot /mnt/.snapshots
-mount -o noatime,compress=zstd,subvol=@log /dev/mapper/cryptroot /mnt/var/log
-mount -o noatime,subvol=@swap /dev/mapper/cryptroot /mnt/swap
+mount -o noatime,subvol=@ /dev/mapper/root /mnt
+mkdir -p /mnt/{efi,home,.snapshots,var/log,swap}
+mount -o noatime,subvol=@home /dev/mapper/root /mnt/home
+mount -o noatime,compress=zstd,subvol=@.snapshots /dev/mapper/root /mnt/.snapshots
+mount -o noatime,compress=zstd,subvol=@log /dev/mapper/root /mnt/var/log
+mount -o noatime,subvol=@swap /dev/mapper/root /mnt/swap
 
 if [[ ${DISTRO} == "arch" ]]; then
     mkdir -p /mnt/var/cache/pacman/pkg
-    mount -o noatime,compress=zstd,subvol=@pkg /dev/mapper/cryptroot /mnt/var/cache/pacman/pkg
+    mount -o noatime,compress=zstd,subvol=@pkg /dev/mapper/root /mnt/var/cache/pacman/pkg
 fi
 
 if [[ ${DISTRO} == "nixos" ]]; then
     mkdir -p /mnt/nix
-    mount -o noatime,compress=zstd,subvol=@pkg /dev/mapper/cryptroot /mnt/nix
+    mount -o noatime,compress=zstd,subvol=@pkg /dev/mapper/root /mnt/nix
 fi
 
 # create swap file inside the swap subvolume
@@ -65,4 +65,4 @@ swapon /mnt/swap/swapfile
 
 # ESP partition
 mkfs.fat -F32 "${DEVICE_DISK}"1
-mount "${DEVICE_DISK}"1 /mnt/boot
+mount "${DEVICE_DISK}"1 /mnt/efi
