@@ -34,7 +34,7 @@ mkfs.btrfs /dev/mapper/root
 mount /dev/mapper/root /mnt
 btrfs su cr /mnt/@
 btrfs su cr /mnt/@home
-btrfs su cr /mnt/@snapshots
+btrfs su cr /mnt/@.snapshots
 btrfs su cr /mnt/@log
 btrfs su cr /mnt/@swap
 
