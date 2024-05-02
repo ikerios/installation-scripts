@@ -18,8 +18,9 @@
         #POST_BOOTSTRAP_HOOK = " apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y full-upgrade ";
         SERVER_PUBLIC = "false";
         ADMINLIST_IDS = "--";
-        SERVER_ARGS = " -modifier raids none -modifier portals casual ";
-        #SERVER_ARGS = " -modifier raids none -modifier portals casual -setkey nobuildcost ";
+        #SERVER_ARGS = " -preset normal -modifier raids none ";
+        #SERVER_ARGS = " -preset normal -modifier raids none -modifier portals casual ";
+        PUBLIC_TEST = "false";
       };
       extraOptions = [
         "--pull=newer"

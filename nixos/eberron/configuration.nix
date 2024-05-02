@@ -7,6 +7,8 @@
     ];
 
   boot.kernelParams = [ "mitigations=off" ];
+  boot.swraid.enable = true;
+  boot.swraid.mdadmConf = "MAILADDR --@--.--";
 
   system.autoUpgrade.enable = true;
   system.autoUpgrade.allowReboot = true;
@@ -48,11 +50,13 @@
     openssh.authorizedKeys.keys = []
   };
 
+  #users.users.root.openssh.authorizedKeys.keys = [""];
+
   environment.systemPackages = with pkgs; [];
 
   services.openssh = {
     enable = true;
-    #settings.PermitRootLogin = "yes";
+    #settings.PermitRootLogin = "yes"
     settings.PasswordAuthentication = false;
     settings.KbdInteractiveAuthentication = false;
     openFirewall = true;
