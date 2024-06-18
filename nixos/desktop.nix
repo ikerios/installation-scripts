@@ -56,12 +56,12 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-  services.printing.drivers = with pkgs; [ hplip ];
+  services.printing.drivers = with pkgs; [ hplipWithPlugin ];
 
   services.avahi = {
     # Enables mDNS with .local domain support
     enable = true;
-    nssmdns = true;
+    nssmdn4 = true;
     reflector = true;
     openFirewall = true;
     #browseDomains = [ ];
@@ -91,17 +91,18 @@
   services.gnome.sushi.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.<user> = {
-  isNormalUser = true;
-  description = "user";
-  extraGroups = [
-    "networkmanager"
-    "wheel"
-    "libvirtd"
-    "podman"
-  ];
-  # packages = with pkgs; [];
-  shell = pkgs.zsh;
+  users.users.-- = {
+    isNormalUser = true;
+    description = "user";
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "libvirtd"
+      "podman"
+    ];
+    # packages = with pkgs; [];
+    shell = pkgs.zsh;
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -136,4 +137,4 @@
   #   remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
   #   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   # };
-};
+}

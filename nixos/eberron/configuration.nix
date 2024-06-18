@@ -37,18 +37,18 @@
     };
     podman = {
       enable = true;
-      dockerCompat = true;
+      #dockerCompat = true;
       defaultNetwork.settings.dns_enabled = true;
       networkSocket.openFirewall = true;
     };
   };
 
   users.users.-- = {
-  isNormalUser = true;
-  extraGroups = [ "wheel" "libvirt" "podman" ];
-  packages = with pkgs; [ ];
-  openssh.authorizedKeys.keys = [ ]
-    };
+    isNormalUser = true;
+    extraGroups = [ "wheel" "libvirt" "podman" ];
+    packages = with pkgs; [ ];
+    openssh.authorizedKeys.keys = [ ];
+  };
 
   #users.users.root.openssh.authorizedKeys.keys = [""];
 

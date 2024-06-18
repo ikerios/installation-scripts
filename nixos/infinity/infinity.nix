@@ -5,8 +5,6 @@
   boot.kernelParams = [ "mitigations=off" "quiet" ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  swapDevices = [{ device = "/swap/swapfile"; }];
-
   boot.kernel.sysctl = {
     "vm.swappiness" = 10;
   };
@@ -18,7 +16,7 @@
       vaapiVdpau
       libvdpau-va-gl
     ];
-    driSupport32Bit = true;
+    #driSupport32Bit = true;
   };
 
   hardware.system76 = {

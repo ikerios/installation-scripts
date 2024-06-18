@@ -40,4 +40,6 @@ in
       fsType = "btrfs";
       options = [ "subvol=@pkg" "compress=zstd" "noatime" ];
     };
+
+  swapDevices = [{ device = "/swap/swapfile"; }];
 }
