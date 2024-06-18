@@ -44,15 +44,15 @@
   };
 
   users.users.-- = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" "libvirt" "podman" ];
-    packages = with pkgs; [];
-    openssh.authorizedKeys.keys = []
-  };
+  isNormalUser = true;
+  extraGroups = [ "wheel" "libvirt" "podman" ];
+  packages = with pkgs; [ ];
+  openssh.authorizedKeys.keys = [ ]
+    };
 
   #users.users.root.openssh.authorizedKeys.keys = [""];
 
-  environment.systemPackages = with pkgs; [];
+  environment.systemPackages = with pkgs; [ btop htop duf pciutils smartmontools ];
 
   services.openssh = {
     enable = true;
@@ -67,7 +67,5 @@
   # networking.firewall.allowedTCPPorts = [];
   # networking.firewall.allowedUDPPorts = [];
 
-  system.copySystemConfiguration = true;
-
-  system.stateVersion = "23.11";
+  system.stateVersion = "24.05";
 }

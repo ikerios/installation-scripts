@@ -48,8 +48,10 @@
 
   # Configure keymap in X11
   services.xserver = {
-    layout = "us";
-    xkbVariant = "";
+    xkb = {
+      layout = "us";
+      variant = "";
+    };
   };
 
   # Enable CUPS to print documents.
@@ -90,17 +92,16 @@
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.<user> = {
-    isNormalUser = true;
-    description = "user";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-      "libvirtd"
-      "podman"
-    ];
-    # packages = with pkgs; [];
-    shell = pkgs.zsh;
-  };
+  isNormalUser = true;
+  description = "user";
+  extraGroups = [
+    "networkmanager"
+    "wheel"
+    "libvirtd"
+    "podman"
+  ];
+  # packages = with pkgs; [];
+  shell = pkgs.zsh;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -128,10 +129,11 @@
     package = pkgs.ananicy-cpp;
   };
 
+  programs.virt-manager.enable = true;
+
   # programs.steam = {
   #   enable = true;
   #   remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
   #   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   # };
-
-}
+};

@@ -1,35 +1,21 @@
 { config, pkgs, ... }:
 
 {
-  systemd.services."nextcloud-setup" = {
-    requires = [ "postgresql.service" ];
-    after = [ "postgresql.service" ];
-  };
-
-  services.postgresql = {
-    ensureDatabases = [ "nextcloud" ];
-    ensureUsers = [
-      {
-        name = "nextcloud";
-        ensureDBOwnership = true;
-      }
-    ];
-  };
-
   environment.etc."nextcloud-admin-pass".text = "--";
   services.nextcloud =
     {
       enable = true;
       hostName = "--";
-      #package = pkgs.nextcloud27;
+      package = pkgs.nextcloud29;
+      database.createLocally = true;
       config = {
         dbtype = "pgsql";
         adminpassFile = "/etc/nextcloud-admin-pass";
       };
       https = true;
       configureRedis = true;
-      maxUploadSize = "2G";
-      extraOptions.enabledPreviewProviders = [
+      maxUploadSize = "4G";
+      settings.enabledPreviewProviders = [
         "OC\\Preview\\BMP"
         "OC\\Preview\\GIF"
         "OC\\Preview\\JPEG"

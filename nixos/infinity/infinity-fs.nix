@@ -6,11 +6,6 @@ let
 in
 
 {
-  boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "nvme" "rtsx_pci_sdmmc" "crc32c_intel" "aesni_intel" ];
-  boot.initrd.kernelModules = [ "kvm-intel" "i915" ];
-  boot.kernelParams = [ "mitigations=off" "quiet" ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-
   fileSystems."/" =
     {
       device = "/dev/disk/by-uuid/" + disk_uuid;
@@ -45,7 +40,4 @@ in
       fsType = "btrfs";
       options = [ "subvol=@pkg" "compress=zstd" "noatime" ];
     };
-
-  swapDevices = [{ device = "/swap/swapfile"; }];
-
 }
