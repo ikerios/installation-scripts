@@ -24,7 +24,7 @@ in
     {
       device = "/dev/disk/by-uuid/" + disk_uuid;
       fsType = "btrfs";
-      options = [ "subvol=@snapshots" "compress=zstd" "noatime" ];
+      options = [ "subvol=@.snapshots" "compress=zstd" "noatime" ];
     };
 
   fileSystems."/var/log" =
