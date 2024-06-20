@@ -9,7 +9,6 @@
         "0.0.0.0:2456:2456/udp"
         "0.0.0.0:2457:2457/udp"
       ];
-      #user = "root:root";
       environment = {
         TZ = "Europe/Rome";
         SERVER_NAME = "firstworld";
@@ -20,6 +19,7 @@
         ADMINLIST_IDS = "--";
         #SERVER_ARGS = " -preset normal -modifier raids none ";
         #SERVER_ARGS = " -preset normal -modifier raids none -modifier portals casual ";
+        #SERVER_ARGS = " -preset normal -modifier raids none -modifier deathpenalty casual ";
         PUBLIC_TEST = "false";
       };
       extraOptions = [
@@ -27,12 +27,12 @@
         "--cap-add=sys_nice"
       ];
       volumes = [
-        "/root/podman/valheim-one/config:/config"
-        "/root/podman/valheim-one/data:/opt/valheim"
+        "/storage/podman/valheim-one/config:/config"
+        "/storage/podman/valheim-one/data:/opt/valheim"
       ];
     };
   };
-  
+
   networking.firewall.allowedUDPPorts = [ 2456 2457 ];
   networking.firewall.interfaces.podman0.allowedUDPPorts = [ 2456 2457 ];
 }

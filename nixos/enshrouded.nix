@@ -3,7 +3,7 @@
 {
   virtualisation.oci-containers.containers = {
     enshrouded-one = {
-      image = "docker.io/sknnr/enshrouded-dedicated-server";
+      image = "docker.io/sknnr/enshrouded-dedicated-server:proton-latest";
       autoStart = false;
       ports = [
         "0.0.0.0:15636:15636/udp"
@@ -22,8 +22,8 @@
         "--cap-add=sys_nice"
       ];
       volumes = [
-        "/root/podman/enshrouded-one/download:/home/steam/enshrouded"
-        "/root/podman/enshrouded-one/data:/home/steam/enshrouded/savegame"
+        "/storage/podman/enshrouded-one/download:/home/steam/enshrouded"
+        "/storage/podman/enshrouded-one/data:/home/steam/enshrouded/savegame"
       ];
     };
   };

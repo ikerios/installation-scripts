@@ -20,8 +20,8 @@
         "--cap-add=sys_nice"
       ];
       volumes = [
-        "/root/podman/pihole/etc-pihole:/etc/pihole"
-        "/root/podman/pihole/etc-dnsmasq.d:/etc/dnsmasq.d"
+        "/storage/podman/pihole/etc-pihole:/etc/pihole"
+        "/storage/podman/pihole/etc-dnsmasq.d:/etc/dnsmasq.d"
       ];
     };
   };

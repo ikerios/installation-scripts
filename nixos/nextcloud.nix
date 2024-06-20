@@ -5,6 +5,7 @@
   services.nextcloud =
     {
       enable = true;
+      home = "/storage/nextcloud";
       hostName = "--";
       package = pkgs.nextcloud29;
       database.createLocally = true;

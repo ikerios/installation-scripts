@@ -29,20 +29,6 @@
     keyMap = "it";
   };
 
-  security.virtualisation.flushL1DataCache = "never";
-
-  virtualisation = {
-    libvirtd = {
-      enable = true;
-    };
-    podman = {
-      enable = true;
-      #dockerCompat = true;
-      defaultNetwork.settings.dns_enabled = true;
-      networkSocket.openFirewall = true;
-    };
-  };
-
   users.users.-- = {
     isNormalUser = true;
     extraGroups = [ "wheel" "libvirt" "podman" ];
