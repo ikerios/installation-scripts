@@ -35,16 +35,11 @@
   ];
 
   fonts.fontconfig.allowBitmaps = false;
-  #fonts.fontconfig.cache32Bit = true;
-  #fonts.fontconfig.subpixel.lcdfilter = "none";
+  fonts.fontconfig.cache32Bit = true;
+  fonts.fontconfig.subpixel.lcdfilter = "light";
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-  services.udev.packages = with pkgs; [ gnome.gnome-settings-daemon ];
 
   # Configure keymap in X11
   services.xserver = {
@@ -61,7 +56,7 @@
   services.avahi = {
     # Enables mDNS with .local domain support
     enable = true;
-    nssmdn4 = true;
+    nssmdns4 = true;
     reflector = true;
     openFirewall = true;
     #browseDomains = [ ];
@@ -82,18 +77,12 @@
   services.flatpak.enable = true;
   xdg.portal = {
     enable = true;
-    extraPortals = with pkgs; [ xdg-desktop-portal-gnome ];
   };
-
-  #environment.sessionVariables.NIXOS_OZONE_WL = "1";
-  services.gnome.gnome-keyring.enable = true;
-  services.gnome.gnome-remote-desktop.enable = true;
-  services.gnome.sushi.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.-- = {
     isNormalUser = true;
-    description = "user";
+    description = "user to be created";
     extraGroups = [
       "networkmanager"
       "wheel"
@@ -113,13 +102,6 @@
 
   programs.gnupg.agent.enable = true;
 
-  services.gnome = {
-    gnome-online-accounts.enable = true;
-    gnome-user-share.enable = true;
-    gnome-browser-connector.enable = true;
-    gnome-settings-daemon.enable = true;
-  };
-
   programs.zsh.enable = true;
   programs.zsh.ohMyZsh.enable = true;
   programs.zsh.ohMyZsh.theme = "gentoo";
@@ -135,6 +117,6 @@
   # programs.steam = {
   #   enable = true;
   #   remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-  #   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+  #   #   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   # };
 }

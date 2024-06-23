@@ -8,10 +8,14 @@
   imports =
     [
       ./hardware-configuration.nix
-      ./infinity.nix
-      ./plymouth.nix
-      ./desktop.nix
-      ./virtualization.nix
+      ./infinity-fs.nix
+      #./infinity.nix
+      #./plymouth.nix
+      #./desktop.nix
+      #./gnome.nix
+      #./kde.nix
+      #./software.nix
+      #./virtualization.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -26,7 +30,6 @@
 
   # Set your time zone.
   time.timeZone = "Europe/Rome";
-
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
