@@ -18,13 +18,12 @@ if [[ "$DEVICE_DISK" == *"nvme"* ]]; then
   DEVICE_DISK+="p"
 fi
 
-cryptsetup luksFormat -y -v "${DEVICE_DISK}"2
 cryptsetup open ${DEVICE_DISK}"2 root
 mount -o noatime,subvol=@ /dev/mapper/root /mnt
 mount -o noatime,subvol=@home /dev/mapper/root /mnt/home
 mount -o noatime,compress=zstd,subvol=@.snapshots /dev/mapper/root /mnt/.snapshots
 mount -o noatime,compress=zstd,subvol=@log /dev/mapper/root /mnt/var/log
-
+mount -o noatime,subvol=@swap /dev/mapper/root /mnt/swap
 
 if [[ ${DISTRO} == "arch" ]]; then
     mount -o noatime,compress=zstd,subvol=@pkg /dev/mapper/root /mnt/var/cache/pacman/pkg
@@ -34,6 +33,6 @@ if [[ ${DISTRO} == "nixos" ]]; then
     mount -o noatime,compress=zstd,subvol=@pkg /dev/mapper/root /mnt/nix
 fi
 
-mount /dev/${DEVICE_DISK}"1 /mnt/efi
+mount ${DEVICE_DISK}"1 /mnt/efi
 
 swapon /mnt/swap/swapfile
