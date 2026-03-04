@@ -1,7 +1,6 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
   i18n.extraLocaleSettings = {
@@ -19,59 +18,56 @@
   console = {
     packages = with pkgs; [ terminus_font ];
     font = "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
-    useXkbConfig = true; # use xkbOptions in tty.
-    #keyMap = "us";
-    #earlySetup = true;
   };
 
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    liberation_ttf
-    fira-code
-    fira-code-symbols
-    source-code-pro
+
+  fonts.enableDefaultPackages = true;
+
+  fonts.packages = with pkgs; [ inter source-sans source-serif source-code-pro andika charis gentium carlito caladea texlivePackages.xcharter ] ++ builtins.filter lib.attrsets.isDerivation (builtins.attrValues pkgs.nerd-fonts);
+
+  fonts.fontconfig.defaultFonts.serif = [
+    "Source Serif"
+  ];
+
+  fonts.fontconfig.defaultFonts.sansSerif = [
+    "Source Sans"
+  ];
+
+  fonts.fontconfig.defaultFonts.monospace = [
+    "Source Code Pro"
   ];
 
   fonts.fontconfig.allowBitmaps = false;
+
   fonts.fontconfig.cache32Bit = true;
+
+  fonts.fontconfig.subpixel.rgba = "vrgb";
   fonts.fontconfig.subpixel.lcdfilter = "light";
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
+  fonts.fontconfig.hinting.style = "slight";
 
-  # Configure keymap in X11
-  services.xserver = {
-    xkb = {
-      layout = "us";
-      variant = "";
-    };
-  };
+  fonts.fontDir.enable = true;
+
+  # Enable the X11 windowing system.
+  services.xserver.enable = false;
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
   services.printing.drivers = with pkgs; [ hplipWithPlugin ];
 
   services.avahi = {
-    # Enables mDNS with .local domain support
     enable = true;
     nssmdns4 = true;
     reflector = true;
     openFirewall = true;
-    #browseDomains = [ ];
   };
 
-  # Enable sound with pipewire.
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
+  # Enable pipewire.
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
-    #alsa.support32Bit = true;
     pulse.enable = true;
-    #jack.enable = true;
   };
 
   services.flatpak.enable = true;
@@ -80,14 +76,15 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.-- = {
+  users.users.ikerios = {
     isNormalUser = true;
-    description = "user to be created";
+    description = "Stefano P.";
     extraGroups = [
       "networkmanager"
       "wheel"
       "libvirtd"
       "podman"
+      "docker"
     ];
     # packages = with pkgs; [];
     shell = pkgs.zsh;
@@ -112,11 +109,22 @@
     package = pkgs.ananicy-cpp;
   };
 
-  programs.virt-manager.enable = true;
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+  };
 
-  # programs.steam = {
-  #   enable = true;
-  #   remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-  #   #   dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
-  # };
+  programs.vscode.enable = true;
+  programs.nix-ld.enable = true;
+
+  programs.firefox = {
+    enable = true;
+    preferences = {
+      "widget.use-xdg-desktop-portal.file-picker" = 1;
+    };
+  };
+
+  environment.sessionVariables = {
+    MOZ_USE_XINPUT2 = "1";
+  };
 }

@@ -4,38 +4,47 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    aha
     b2sum
     btop
     btrfs-progs
+    #calibre
+    cifs-utils
+    claude-code
     direnv
     discord
     dosfstools
     e2fsprogs
     exfatprogs
-    firefox
+    fastfetch
+    (pkgs.wrapFirefox (pkgs.firefox-unwrapped.override { pipewireSupport = true;}) {})
     htop
+    joplin-desktop
+    krita-unwrapped
     libreoffice-fresh
-    neofetch
-    nixpkgs-fmt
+    nixfmt
     nmap
     nvd
     obs-studio
-    onlyoffice-bin
+    onlyoffice-desktopeditors
     pciutils
+    planify
     podman-desktop
     popsicle
-    protonmail-bridge
     protonmail-desktop
     protonvpn-gui
+    proton-pass
+    readest
     snapper-gui
     speechd
-    spotify
     sq
+    sslscan
     telegram-desktop
-    thunderbird
+    ungoogled-chromium
     usbutils
     vim
     vlc
+    vscode
     vscodium
     wget
   ];

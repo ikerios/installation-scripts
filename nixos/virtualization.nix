@@ -1,34 +1,26 @@
 { config, pkgs, ... }:
 
 {
-  #programs.dconf.enable = true;
+  boot.kernel.sysctl = {
+    "net.ipv4.ip_forward" = 1;
+  };
+
   security.virtualisation.flushL1DataCache = "never";
+
+  networking.firewall.trustedInterfaces = [ "virbr0" ];
+
+  programs.virt-manager.enable = true;
 
   virtualisation = {
     libvirtd = {
       enable = true;
     };
-    # docker = {
-    #   enable = true;
-    #   storageDriver = "btrfs";
-    # };
     podman = {
       enable = true;
       #dockerCompat = true;
       defaultNetwork.settings.dns_enabled = true;
       networkSocket.openFirewall = true;
     };
+    docker.enable = false;
   };
-
-  # virtualisation.containers.storage.settings =
-  #   {
-  #     storage = {
-  #       driver = "btrfs";
-  #       graphroot = "/var/lib/containers/storage";
-  #       runroot = "/run/containers/storage";
-  #     };
-  #   };
-
-
-  # virtualisation.cri-o.storageDriver = "btrfs";
 }

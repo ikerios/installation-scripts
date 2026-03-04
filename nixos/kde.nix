@@ -1,23 +1,28 @@
 { config, pkgs, ... }:
 
 {
+  #services.displayManager.sddm = {
+  #  enable = true;
+  #  wayland = {
+  #    enable = true;
+  #    #compositor = "kwin";
+  #  };
+  #};
 
-  services.xserver.displayManager.sddm =
-    {
-      enable = true;
-      wayland.enable = true;
-    };
+  services.displayManager.plasma-login-manager.enable = true;
 
-  services.xserver.desktopManager.plasma6.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
   programs.dconf.enable = true;
 
   xdg.portal = {
-    extraPortals = with pkgs; [ xdg-desktop-portal-kde ];
+    extraPortals = with pkgs; [ kdePackages.xdg-desktop-portal-kde ];
   };
 
-  # List packages installed in system profile
-  environment.systemPackages = with pkgs; [
-  ];
+  programs.kdeconnect.enable = true;
+  services.geoclue2.enable = true;
 
+  environment.systemPackages = with pkgs; [ kdePackages.kcalc kdePackages.calligra ];
+
+  services.desktopManager.plasma6.enableQt5Integration = false;
 }

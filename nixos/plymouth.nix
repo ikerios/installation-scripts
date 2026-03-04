@@ -1,4 +1,5 @@
 { config, pkgs, ... }:
+
 {
   boot.loader.timeout = 0;
   boot.initrd.systemd.enable = true;
